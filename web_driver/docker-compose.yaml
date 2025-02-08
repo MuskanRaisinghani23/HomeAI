@@ -1,0 +1,48 @@
+services:
+  selenium-chrome-1:
+    image: selenium/standalone-chrome:latest
+    container_name: selenium-chrome-1
+    ports:
+      - "4441:4444"  # Map host port 4441 to container port 4444
+    shm_size: "2g"   # Increase shared memory for multiple sessions
+    environment:
+      - SE_NODE_MAX_SESSIONS=2  # Allow 2 simultaneous sessions
+      - SE_NODE_SESSION_TIMEOUT=60  # Session timeout in seconds
+    mem_limit: 0.8g          # Limit the container to 0.8 GB of RAM
+    cpus: "0.2"             # Limit container to 20% of a single CPU core (0.2 CPUs)
+
+  selenium-chrome-2:
+    image: selenium/standalone-chrome:latest
+    container_name: selenium-chrome-2
+    ports:
+      - "4442:4444"  # Map host port 4442 to container port 4444
+    shm_size: "2g"   # Increase shared memory for multiple sessions
+    environment:
+      - SE_NODE_MAX_SESSIONS=2  # Allow 2 simultaneous sessions
+      - SE_NODE_SESSION_TIMEOUT=60  # Session timeout in seconds
+    mem_limit: 0.8g          # Limit the container to 0.8 GB of RAM
+    cpus: "0.2"             # Limit container to 20% of a single CPU core (0.2 CPUs)
+
+  selenium-chrome-3:
+    image: selenium/standalone-chrome:latest
+    container_name: selenium-chrome-3
+    ports:
+      - "4443:4444"  # Map host port 4443 to container port 4444
+    shm_size: "2g"   # Increase shared memory for multiple sessions
+    environment:
+      - SE_NODE_MAX_SESSIONS=2  # Allow 2 simultaneous sessions
+      - SE_NODE_SESSION_TIMEOUT=60  # Session timeout in seconds
+    mem_limit: 0.8g          # Limit the container to 0.8 GB of RAM
+    cpus: "0.2"             # Limit container to 20% of a single CPU core (0.2 CPUs)
+
+  selenium-chrome-4:
+    image: selenium/standalone-chrome:latest
+    container_name: selenium-chrome-4
+    ports:
+      - "4444:4444"  # Map host port 4444 to container port 4444 (this is the original container)
+    shm_size: "2g"   # Increase shared memory for multiple sessions
+    environment:
+      - SE_NODE_MAX_SESSIONS=2  # Allow 2 simultaneous sessions
+      - SE_NODE_SESSION_TIMEOUT=60  # Session timeout in seconds
+    mem_limit: 0.8g          # Limit the container to 0.8 GB of RAM
+    cpus: "0.2"             # Limit container to 20% of a single CPU core (0.2 CPUs)
