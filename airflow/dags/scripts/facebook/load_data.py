@@ -1,5 +1,6 @@
 import configparser
 from helper.snowflake_helper import snowflake_connection
+import os
 
 config = configparser.ConfigParser()
 config.read('configuration.properties')
@@ -8,8 +9,10 @@ def load_data(file_name, stage_name):
   try:
     conn = snowflake_connection()
     cur = conn.cursor()
-    cur.execute(f"PUT file://{file_name} @{stage_name}")
-    
+    put_command = f"PUT file://{file_name} @{stage_name} AUTO_COMPRESS=TRUE OVERWRITE=TRUE"
+    print(put_command)
+    result = cur.execute(put_command).fetchall()
+    print("PUT command result: ", result)
     print(f"Data loaded successfully from {file_name} to snowflake stage")
   except Exception as e:
     print("Exception in load_data function: ",e)
@@ -69,7 +72,7 @@ def merge_data(stage_name, table_name, filename, primary_key):
                 s.ROOM_TYPE,
                 s.OTHER_DETAILS);
     '''
-    # print(merge_query)
+    print(merge_query)
     print("merging data...")
 
     # executing load
@@ -87,11 +90,14 @@ def merge_data(stage_name, table_name, filename, primary_key):
   
   
 def load_to_snowflake():
-  file_name = 'facebook_listing_transformed_cleaned.json'
+  current_directory = os.path.dirname(os.path.realpath(__file__))
+  print("path +++++++++++++++++", current_directory)
+  file_name = 'data/facebook/facebook_listing_transformed_cleaned.json'
+  stage_file_name = 'facebook_listing_transformed_cleaned.json'
   marketplace_stage_name = 'MARKETPLACE_LISTING_STAGE'
   room_table_name = 'rooms_listings'
 
   # marketplace data load
   load_data(file_name, marketplace_stage_name)
 
-  merge_data(marketplace_stage_name, room_table_name, file_name, 'LISTING_URL')
+  merge_data(marketplace_stage_name, room_table_name, stage_file_name, 'LISTING_URL')
