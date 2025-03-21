@@ -3,3 +3,5 @@ logs/*
 .env
 
 configuration.properties
+
+data/*
