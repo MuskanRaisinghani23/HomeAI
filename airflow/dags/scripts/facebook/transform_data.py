@@ -44,7 +44,7 @@ def clean_facebook_listings():
 
     # removing listings with price less than 200
     df = df[df["price"] > 200]
-
+    
     # **Step 4: Save the Transformed Data Back to JSON**
     df.to_json(output_file_path, orient="records", indent=4)
     
