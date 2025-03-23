@@ -33,6 +33,8 @@ def extract_listing_for_url(url):
             logger.info("Closing pop-up")
             browser.find_by_css('div[aria-label="Close"]').first.click()
 
+        browser.execute_script("window.scrollTo(0, 400);")
+
         # Click the "See More" button if it exists
         try:
             see_more_button = browser.find_by_css('div[role="button"] span.x193iq5w.xeuugli.x13faqbe.x1vvkbs.x1xmvt09.x6prxxf.xvq8zen.x1s688f.xzsf02u')

@@ -38,7 +38,7 @@ def process_listings(json_file_path, output_file_path):
     - **Room Count**: The number of rooms/beds (ROOM_COUNT).
     - **Bathroom Count**: The number of bathrooms (BATH_COUNT).
     - **People Count**: The number of people living in the property (PEOPLE_COUNT).
-    - **Description**: The short description summary of the property (DESCRIPTION_summary).
+    - **Description**: The short description summary of the property. Translate to English language wherever necessary (DESCRIPTION_summary).
     - **Contact**: The contact number for the listing (CONTACT).
     - **Laundry Availability**: if laundry available then 1 or else 0 (LAUNDARY_AVAILABLE).
     - **Room Type**: Type of room (e.g., Private or Shared) (ROOM_TYPE).
@@ -73,7 +73,7 @@ def process_listings(json_file_path, output_file_path):
         for description in descriptions:
             try:
                 response = complete(
-                    "mistral-7b",
+                    "claude-3-5-sonnet",
                     f"{prompt} \n\n listing description: \n {description}",
                     session=session
                 )
