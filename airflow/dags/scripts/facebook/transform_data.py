@@ -24,9 +24,10 @@ def clean_facebook_listings():
     def extract_price(price):
         """Extract numeric value from price string like '$700' → 700"""
         if isinstance(price, str):
-            match = re.search(r'\d+', price)  # Find first number
-            return int(match.group()) if match else None
-        return None
+            cleaned_price = price.replace(',', '')
+            match = re.search(r'\d+', cleaned_price)  # Find first number
+            return int(match.group()) if match else 0
+        return 0
 
     df["price"] = df["price"].apply(extract_price)
 
@@ -41,6 +42,9 @@ def clean_facebook_listings():
 
     df["laundry_available"] = df["laundry_available"].apply(transform_laundry)
 
+    # removing listings with price less than 200
+    df = df[df["price"] > 200]
+    
     # **Step 4: Save the Transformed Data Back to JSON**
     df.to_json(output_file_path, orient="records", indent=4)
     
