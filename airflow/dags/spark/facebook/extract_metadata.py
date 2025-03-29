@@ -29,6 +29,7 @@ def extract_metadata_for_city(city):
 
     # Set up search parameters
     days_listed = 1
+    
     query = "room%20for%20rent"
 
     # Set up full URL
