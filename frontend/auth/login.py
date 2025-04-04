@@ -3,8 +3,8 @@ from auth.users_db import users_db
 
 def login():
     st.title("Login")
-    email = st.text_input("Email")
-    password = st.text_input("Password", type="password")
+    email = st.text_input("Email", key="login_email")
+    password = st.text_input("Password", type="password", key="login_password")
     st.markdown("""
        <style>
        .stButton button {
