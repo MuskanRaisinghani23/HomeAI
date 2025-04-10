@@ -1,2 +1,2 @@
-Python 3.9.6
-Streamlit 1.42.0
+Python
+Streamlit
