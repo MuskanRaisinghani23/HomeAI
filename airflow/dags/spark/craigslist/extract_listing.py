@@ -60,7 +60,6 @@ def extract_post_details(listing):
         "Description": description,
         "More Info": attributes,
         "Image URL": image_url,
-        # "Listing Date": posting_date,
         "Listing URL": link,
         "MainLocation": listing["location"],
         "Price": listing["price"]
@@ -116,8 +115,7 @@ def scrape_craigslist(city):
 
 def main():
     # Create a list of cities to scrape
-    # cities = ["boston", "sfbay"]
-    cities = ["newyork", "chicago", "losangeles", "miami", "austin","detroit","maine",
+    cities = ["boston", "sfbay", "newyork", "chicago", "losangeles", "miami", "austin","detroit","maine",
               "sandiego","houston","dallas","tampa","indianapolis","cleveland","phoenix", "charlotte","atlanta","denver","kansascity",
               "sanantonio","honolulu","nashville","seattle","minneapolis","pittsburgh","neworleans","saltlakecity","buffalo"]
     
