@@ -10,7 +10,7 @@ RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
     echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | tee /etc/apt/sources.list.d/google-chrome.list && \
     apt-get update --fix-missing && apt-get install -y google-chrome-stable && \
     # Install ChromeDriver (matching Chrome version 133.0.6943.126)
-    wget -q "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/133.0.6943.126/linux64/chromedriver-linux64.zip" && \
+    wget -q "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/135.0.7049.84/linux64/chromedriver-linux64.zip" && \
     unzip chromedriver-linux64.zip && \
     mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver && \
     chmod +x /usr/local/bin/chromedriver && \

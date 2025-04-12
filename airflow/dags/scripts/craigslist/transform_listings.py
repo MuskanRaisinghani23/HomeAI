@@ -92,20 +92,23 @@ def process_listings(json_file_path, output_file_path):
 
     # Read JSON file
     df_pandas = pd.read_json(json_file_path)
+    print("----------------------------------")
+    print("Listings extracted", df_pandas.shape[0])
+    print("----------------------------------")
 
     session = Session.builder.configs(connection_params).create()
 
-    df_copy = df_pandas.head(3).copy()
+    df_copy = df_pandas.copy()
 
     # Prepare prompt and complete using Claude
     def extract_structured_data(row) -> dict:
         description = row["Description"]
-        more_info = row.get("Other Details", None) 
+        more_info = row.get("More Info", None) 
         main_location = row.get("MainLocation", None)
 
         formatted_prompt = prompt_template.format(description=description, more_info=more_info if more_info else "", main_location=main_location if main_location else "")
         try:
-            response = complete(model="claude-3-5-sonnet", prompt=formatted_prompt)
+            response = complete(model="claude-3-5-sonnet", prompt=formatted_prompt, session=session)
             structured_data = json.loads(response)
             
             if "other_details" in structured_data and isinstance(structured_data["other_details"], dict):
@@ -121,7 +124,7 @@ def process_listings(json_file_path, output_file_path):
     df_extracted = pd.json_normalize(df_copy["structured"], sep="_")
 
     df_extracted["other_details"] = df_copy["structured"].apply(lambda x: json.loads(x["other_details"]) if "other_details" in x else {})
-    df_copy = df_copy = df_copy.drop(columns=["structured", "Other Details", "MainLocation"])
+    df_copy = df_copy = df_copy.drop(columns=["structured", "MainLocation", "More Info"])
 
     flattened_columns = [col for col in df_extracted.columns if col.startswith("other_details.")]
     df_extracted = df_extracted.drop(columns=flattened_columns, errors="ignore")
@@ -140,7 +143,11 @@ def process_listings(json_file_path, output_file_path):
 
     logger.info(f"Transformed and cleaned JSON saved to {output_file_path}")
 
-if __name__ == "__main__":
-    input_path = "data/craigslist_listings.json"
-    output_path = "data/craigslist_listings_transformed.json"
+def transform_listings():
+    """Main function to transform listings."""
+    input_path = "data/craigslist/craigslist_listings.json"
+    output_path = "data/craigslist/craigslist_listings_cleaned.json"
     process_listings(input_path, output_path)
+
+if __name__ == "__main__":
+    transform_listings()

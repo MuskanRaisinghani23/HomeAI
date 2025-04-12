@@ -48,11 +48,11 @@ def extract_post_details(listing):
 
     # Extract image URL
     image_element = soup.find('img')
-    image_url = image_element['src'] if image_element else 'N/A'
+    image_url = image_element['src'] if image_element else None
 
     # Extract posting date
-    date_element = soup.find('time', class_='date timeago')
-    posting_date = date_element['datetime'] if date_element else 'N/A'
+    # date_element = soup.find('time', class_='date timeago')
+    # posting_date = date_element['datetime'] if date_element else 'N/A'
 
     return {
         "Title": title,
@@ -60,7 +60,7 @@ def extract_post_details(listing):
         "Description": description,
         "More Info": attributes,
         "Image URL": image_url,
-        "Listing Date": posting_date,
+        # "Listing Date": posting_date,
         "Listing URL": link,
         "MainLocation": listing["location"],
         "Price": listing["price"]
@@ -115,8 +115,16 @@ def scrape_craigslist(city):
     return all_listings_details
 
 def main():
-    cities = ["boston", "sfbay", "newyork", "chicago", "losangeles", "miami", "austin","detroit","maine","sandiego","houston","dallas","tampa","indianapolis","cleveland","phoenix","charlotte","atlanta","denver","kansascity"]
+    # Create a list of cities to scrape
+    # cities = ["boston", "sfbay"]
+    cities = ["newyork", "chicago", "losangeles", "miami", "austin","detroit","maine",
+              "sandiego","houston","dallas","tampa","indianapolis","cleveland","phoenix", "charlotte","atlanta","denver","kansascity",
+              "sanantonio","honolulu","nashville","seattle","minneapolis","pittsburgh","neworleans","saltlakecity","buffalo"]
     
+    print("---------------------------------------")
+    print(cities)
+    print("---------------------------------------")
+
     spark = SparkSession.builder.appName("CraigslistListingExtraction").getOrCreate()
     cities_rdd = spark.sparkContext.parallelize(cities)
     results = cities_rdd.flatMap(scrape_craigslist).collect()
@@ -125,7 +133,7 @@ def main():
     df = pd.DataFrame(results)
 
     # Save to JSON
-    df.to_json('data/craigslist_listings.json', orient='records', indent=4)
+    df.to_json('data/craigslist/craigslist_listings.json', orient='records', indent=4)
 
     logger.info("Listing extraction completed and saved to JSON.")
 

@@ -25,7 +25,7 @@ def merge_data(stage_name, table_name, filename, primary_key):
     merge_query = f'''
     MERGE INTO {table_name} AS t
     USING (SELECT 
-                parse_json($1):'Listing URL' LISTING_URL,
+                parse_json($1):"Listing URL" LISTING_URL,
                 parse_json($1):main_location LOCATION,
                 parse_json($1):price PRICE,
                 parse_json($1):room_count ROOM_COUNT,
@@ -34,7 +34,7 @@ def merge_data(stage_name, table_name, filename, primary_key):
                 parse_json($1):Description DESCRIPTION_SUMMARY,
                 parse_json($1):contact CONTACT,
                 parse_json($1):laundry_available LAUNDRY_AVAILABLE,
-                parse_json($1):'Image URL' IMAGE_URL,
+                parse_json($1):"Image URL" IMAGE_URL,
                 parse_json($1):room_type ROOM_TYPE,
                 parse_json($1):other_details OTHER_DETAILS
             FROM @{stage_name}/{filename}.gz (FILE_FORMAT => JSON_FORMAT)) AS s    
@@ -89,8 +89,8 @@ def merge_data(stage_name, table_name, filename, primary_key):
   
   
 def load_to_snowflake():
-  file_name = 'data/craigslist_listings_transformed.json'
-  stage_file_name = 'craiglist_listing_cleaned.json'
+  file_name = 'data/craigslist/craigslist_listings_cleaned.json'
+  stage_file_name = 'craigslist_listings_cleaned.json'
   craigslist_stage_name = 'CRAIGS_LISTING_STAGE'
   room_table_name = 'rooms_listings'
 
