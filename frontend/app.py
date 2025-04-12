@@ -1,27 +1,32 @@
 import streamlit as st
 from auth.login import login
 from auth.signup import signup
-from dashboard.home import home
+import pages.dashboard as dashboard
+import pages.listing as listing
+import pages.preference as preference
 
-def main():
+def main(): 
     if "authenticated" not in st.session_state:
         st.session_state["authenticated"] = False
 
     if st.session_state["authenticated"]:
         st.sidebar.title("Navigation")
-        page = st.sidebar.selectbox("Choose a page", ["Home", "Logout"])
-
-        if page == "Home":
-            home()
-        elif page == "Logout":
+        selection = st.sidebar.radio("Go to", ["Dashboard", "Listing", "Preference","Logout"])
+        if selection == "Dashboard":
+            dashboard.dashboard()
+        elif selection == "Listing":
+            listing.listing()
+        elif selection == "Preference":
+            preference.preference()
+        elif selection == "Logout":
             st.session_state["authenticated"] = False
             st.rerun()
     else:
-        page = st.selectbox("Choose a page", ["Login", "Sign Up"], index=0, key="auth_page")
-
-        if page == "Login":
+        tab1, tab2 = st.tabs(["Login", "Signup"])
+        with tab1:
             login()
-        elif page == "Sign Up":
+            
+        with tab2:
             signup()
 if __name__ == "__main__":
     main()

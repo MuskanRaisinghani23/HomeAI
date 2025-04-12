@@ -3,3 +3,6 @@ HomieAI is built to make the process of finding budget-friendly shared housing e
 
 # How to run Application UI (Streamlit)
 - streamlit run app.py
+
+# How to run swagger UI
+- uvicorn main:app --host localhost --port 8001 --reload
