@@ -17,7 +17,7 @@ transform_listing = os.path.join(current_directory, 'spark', 'facebook','transfo
 
 dag = DAG(
   dag_id="facebook_marketplace_scraper",
-  schedule_interval="0 22 * * *",
+  schedule_interval=None,
   start_date=days_ago(0),
   catchup=False,
   dagrun_timeout=timedelta(minutes=360),

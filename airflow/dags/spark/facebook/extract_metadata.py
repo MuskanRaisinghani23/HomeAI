@@ -99,7 +99,9 @@ def main():
     spark = SparkSession.builder.appName("MetadataExtraction").getOrCreate()
 
     # Create a list of cities to scrape
-    cities = ["boston", "sanfrancisco", "newyork", "chicago", "losangeles", "miami","austin","detroit","portland_maine","sandiego","houston","dallas","tampa","indianapolis","cleveland","phoenix","charlotte","atlanta","denver","kansascity"]
+    cities = ["boston", "sanfrancisco", "newyork", "chicago", "losangeles", "miami","austin","detroit","portland_maine",
+              "sandiego","houston","dallas","tampa","indianapolis","cleveland","phoenix", "charlotte","atlanta","denver","kansascity",
+              "sanantonio","honolulu","nashville","seattle","minneapolis","pittsburgh","neworleans","saltlakecity","albuquerque", "buffalo"]
 
     # Parallelize the scraping task
     cities_rdd = spark.sparkContext.parallelize(cities)
