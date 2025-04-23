@@ -1,8 +1,15 @@
 import streamlit as st
 import requests
 
+@st.dialog("Listing Details")
+def more_details(listing):
+    st.write(f"**Price:** {listing['price']}")
+    st.write(f"**Location:** {listing['location']}")
+    st.write(f"**Summary:** {listing['description_summary']}")
+    st.link_button("Open Listing", listing["listing_url"])
+
 def listing():
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2, gap="large")
 
     with col1:
         st.title("Available Listings")
@@ -13,7 +20,7 @@ def listing():
                 "Content-Type": "application/json"
             }
 
-            response = requests.get("http://localhost:8002/api/listing/get-listings", headers=headers)
+            response = requests.get("http://localhost:8001/api/listing/get-listings", headers=headers)
             response.raise_for_status()  # Raise an error for bad responses
             listings = response.json().get("data", [])
         except Exception as e:
@@ -23,20 +30,30 @@ def listing():
         # Display listings
         if listings:
             for listing in listings:
-                # Card layout for each listing
+                # with st.container():
+                #     st.write(f"**Price:** {l['price']}")
+                #     st.write(f"**Location:** {l['location']}")
+                #     st.write(f"**Summary:** {l['description_summary']}")
+
+                #     # 4) Your Streamlit button lives in the same .card div
+                #     if st.button("More Details", key=l["listing_url"]):
+                #         more_details(l)
+
                 st.markdown(
                     f"""
                     <div style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; margin: 10px 0; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                         <h3 style="margin: 0;">Price: {listing['price']}</h3>
                         <p style="margin: 5px 0;">Location: {listing['location']}</p>
                         <p style="margin: 5px 0;">Summary: {listing['description_summary']}</p>
-                        <a href="{listing['listing_url']}" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">View More Details</a>
                     </div>
                     """,
                     unsafe_allow_html=True
                 )
+                if st.button("More Details", key=listing["listing_url"]):
+                    more_details(listing=listing)
         else:
             st.info("No listings available at the moment.")
+            return
     with col2:
         st.subheader("HomeAI Chat Bot")
 
@@ -72,7 +89,7 @@ def listing():
             bot_response = f"You said: {user_input}"
             st.session_state.messages.append({"role": "assistant", "content": bot_response})
 
-            render_chat()  # Update chat UI
+            # render_chat()  # Update chat UI
 
             # Force rerun to trigger scrolling
             st.rerun()

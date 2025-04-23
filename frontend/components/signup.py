@@ -1,5 +1,5 @@
 import streamlit as st
-from auth.users_db import users_db
+from components.users_db import users_db
 
 def signup():
     st.title("Sign Up")
