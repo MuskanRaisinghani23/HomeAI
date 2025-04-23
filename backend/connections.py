@@ -24,6 +24,8 @@ def snowflake_connection():
             role=role
         )
 
+        print("Snowflake connection established successfully.")
+
         return conn
     except Exception as e:
         print("Exception in snowflake_connection function: ",e)

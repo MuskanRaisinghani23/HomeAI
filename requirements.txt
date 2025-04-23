@@ -1,5 +1,5 @@
 absl-py==1.4.0
-aiobotocore==2.21.1
+aiobotocore<=2.20.0
 aiohappyeyeballs==2.6.1
 aiohttp==3.11.16
 aioitertools==0.12.0
@@ -31,7 +31,6 @@ babel==2.17.0
 beautifulsoup4==4.13.3
 blinker==1.9.0
 boto3==1.35.71
-botocore==1.37.1
 cachelib==0.13.0
 cachetools==5.5.2
 certifi==2025.1.31
@@ -69,7 +68,6 @@ Flask-Session==0.5.0
 Flask-SQLAlchemy==2.5.1
 Flask-WTF==1.2.2
 frozenlist==1.5.0
-fsspec==2025.3.2
 gitdb==4.0.12
 GitPython==3.1.44
 google-re2==1.1.20240702
@@ -113,7 +111,6 @@ more-itertools==10.6.0
 multidict==6.3.2
 narwhals==1.33.0
 nest-asyncio==1.6.0
-numpy==2.2.2
 openpyxl==3.1.5
 opentelemetry-api==1.31.1
 opentelemetry-exporter-otlp==1.31.1
@@ -143,7 +140,6 @@ psycopg2==2.9.9
 ptyprocess==0.7.0
 pure_eval==0.2.3
 py4j==0.10.9.7
-pyarrow==19.0.1
 pycparser==2.22
 pydantic==2.10.6
 pydantic_core==2.27.2
