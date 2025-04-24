@@ -23,7 +23,7 @@ def preference():
             "people_count": people_count
         }
         # Make a POST request to the backend API
-        response = requests.post("http://localhost:8002/api/preference//update-preference", json=payload) # Update based on the backend port
+        response = requests.post("http://localhost:8001/api/preference//update-preference", json=payload) # Update based on the backend port
         # Check the response from the API
         if response.status_code == 200:
             response_data = response.json()
