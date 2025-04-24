@@ -13,8 +13,7 @@ app.add_middleware(
 )
 
 app.include_router(preferenceRoute.router, prefix="/api/preference", tags=["preference"])
-app.include_router(listingRoutes.router, prefix="/api/listing", tags=["listing"])\
-
+app.include_router(listingRoutes.router, prefix="/api/listing", tags=["listing"])
 
 
 
