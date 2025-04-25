@@ -8,7 +8,7 @@ import components.preference as preference
 PAGES = {
     "Preference": preference,
     "Listing": listing,
-    "Analytics Dashboard": dashboard
+    "Dashboard": dashboard
 }
 
 def main(): 
