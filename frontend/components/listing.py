@@ -1,95 +1,81 @@
 import streamlit as st
 import requests
+import re
+import unicodedata
+
+def clean_description(text):
+    # Normalize Unicode to ASCII to remove fancy characters
+    text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode()
+
+    text = re.sub(r"(?:\n)?(?:[\*•]+ ?)(?=\w)", r"\n• ", text)
+    text = re.sub(r"(•\s*){2,}", "• ", text)
+    text = re.sub(r"[`_=]", "", text)
+    text = re.sub(r"^\s*•\s*", "", text)
+    text = re.sub(r"\n\s*•\s*\n", "\n", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    return text.strip()
 
 @st.dialog("Listing Details")
 def more_details(listing):
-    st.write(f"**Price:** {listing['price']}")
-    st.write(f"**Location:** {listing['location']}")
-    st.write(f"**Summary:** {listing['description_summary']}")
+    st.write(f"**Laundry Available:** {listing['laundry_available']}")
+    st.write(f"**Room Type:** {listing['room_type']}")
+    st.write(f"**Bathroom Count:** {listing['bath_count']}")
     st.link_button("Open Listing", listing["listing_url"])
 
 def listing():
-    col1, col2 = st.columns(2, gap="large")
+    st.title("Available Listings")
 
-    with col1:
-        st.title("Available Listings")
-        # Fetch listings from the backend API
-        try:
-            headers = {
-                "accept": "application/json",
-                "Content-Type": "application/json"
-            }
+    listings = st.session_state.get("filtered_listings", [])
 
-            response = requests.get("http://localhost:8001/api/listing/get-listings", headers=headers)
-            response.raise_for_status()  # Raise an error for bad responses
-            listings = response.json().get("data", [])
-        except Exception as e:
-            st.error(f"Error fetching listings: {str(e)}")
-            listings = []
+    if listings:
+        for listing in listings:
+            st.markdown(
+                f"""
+                <div style=\"border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; margin: 10px 0; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\">
+                    <h3 style=\"margin: 0;\">Price: {listing['price']}</h3>
+                    <p style=\"margin: 5px 0;\">Location: {listing['location']}</p>
+                    <p style="margin: 5px 0; white-space: pre-wrap;">Summary: {clean_description(listing['description'])}</p>
+                    <p style=\"margin: 5px 0;\">Listing Date: {listing['listing_date']}</p>
+                    <p style=\"margin: 5px 0;\">Source: {listing['source']}</p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+            if st.button("More Details", key=listing["listing_url"]):
+                more_details(listing=listing)
+    else:
+        st.info("No listings available at the moment.")
 
-        # Display listings
-        if listings:
-            for listing in listings:
-                # with st.container():
-                #     st.write(f"**Price:** {l['price']}")
-                #     st.write(f"**Location:** {l['location']}")
-                #     st.write(f"**Summary:** {l['description_summary']}")
+    # with col2:
+    #     st.subheader("HomeAI Chat Bot")
 
-                #     # 4) Your Streamlit button lives in the same .card div
-                #     if st.button("More Details", key=l["listing_url"]):
-                #         more_details(l)
+    #     if "messages" not in st.session_state:
+    #         st.session_state.messages = []
 
-                st.markdown(
-                    f"""
-                    <div style="border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; margin: 10px 0; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                        <h3 style="margin: 0;">Price: {listing['price']}</h3>
-                        <p style="margin: 5px 0;">Location: {listing['location']}</p>
-                        <p style="margin: 5px 0;">Summary: {listing['description_summary']}</p>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-                if st.button("More Details", key=listing["listing_url"]):
-                    more_details(listing=listing)
-        else:
-            st.info("No listings available at the moment.")
-            return
-    with col2:
-        st.subheader("HomeAI Chat Bot")
+    #     chat_container = st.empty()
 
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
+    #     def render_chat():
+    #         with chat_container.container():
+    #             st.markdown(
+    #                 """
+    #                 <style>
+    #                 div[data-testid=\"stVerticalBlock\"] > div:first-child {
+    #                     max-height: 840px !important;
+    #                     overflow-y: auto !important;
+    #                 }
+    #                 </style>
+    #                 """, unsafe_allow_html=True
+    #             )
+    #             for message in st.session_state.messages:
+    #                 with st.chat_message(message["role"]):
+    #                     st.write(message["content"])
 
-        chat_container = st.empty()  # Placeholder for chat messages
+    #     render_chat()
 
-        # Function to render messages
-        def render_chat():
-            with chat_container.container():
-                st.markdown(
-                    """
-                    <style>
-                    div[data-testid="stVerticalBlock"] > div:first-child {
-                        max-height: 840px !important;
-                        overflow-y: auto !important;
-                    }
-                    </style>
-                    """, unsafe_allow_html=True
-                )
-                for message in st.session_state.messages:
-                    with st.chat_message(message["role"]):
-                        st.write(message["content"])
-        
-        render_chat()  # Initial rendering
+    #     user_input = st.chat_input("Ask me anything", key="chat_input")
 
-        # User input
-        user_input = st.chat_input("Ask me anything", key="chat_input")
-
-        if user_input:
-            st.session_state.messages.append({"role": "user", "content": user_input})
-            bot_response = f"You said: {user_input}"
-            st.session_state.messages.append({"role": "assistant", "content": bot_response})
-
-            # render_chat()  # Update chat UI
-
-            # Force rerun to trigger scrolling
-            st.rerun()
+    #     if user_input:
+    #         st.session_state.messages.append({"role": "user", "content": user_input})
+    #         bot_response = f"You said: {user_input}"
+    #         st.session_state.messages.append({"role": "assistant", "content": bot_response})
+    #         st.rerun()

@@ -1,36 +1,40 @@
 import streamlit as st
 import requests
 
+STATE_CITY_MAP = {
+    "MA": ["Boston", "Cambridge", "Somerville"],
+    "CA": ["San Francisco", "Los Angeles", "San Diego"],
+    "NY": ["New York", "Buffalo", "Rochester"]
+}
+
 def preference():
     st.title("Add your preference here for personalized recommendations")
 
     st.subheader("Update preference Information")
 
+    selected_state = st.selectbox("Select State", options=list(STATE_CITY_MAP.keys()))
+    selected_location = st.selectbox("Select Location", options=STATE_CITY_MAP[selected_state])
+
     with st.form(key='preference_form'):
-        budget = st.number_input("Budget", min_value=0, step=1)
+        budget = st.slider("Budget Range", min_value=100, max_value=5000, value=(200, 3000), step=50)
         room_type = st.selectbox("Room Type", options=["Private", "Shared"])
-        location = st.text_input("Location")
-        people_count = st.number_input("People Count", min_value=0, max_value=99, step=1)
+        laundry_available = st.radio("Laundry Available", options=["Yes", "No"])
 
         submit_button = st.form_submit_button(label='Save')
 
     if submit_button:
-        # Call the API to update the preference in Snowflake
         payload = {
-            "budget": budget,
+            "location": selected_location,
+            "min_price": budget[0],
+            "max_price": budget[1],
             "room_type": room_type,
-            "location": location,
-            "people_count": people_count
+            "laundry_availability": True if laundry_available == "Yes" else False
         }
-        # Make a POST request to the backend API
-        response = requests.post("http://localhost:8001/api/preference//update-preference", json=payload) # Update based on the backend port
-        # Check the response from the API
-        if response.status_code == 200:
-            response_data = response.json()
-            if response_data["status"] == "success":
-                st.success("Preference updated successfully!")
-            else:
-                st.error(f"Error: {response_data['message']}")
-        else:
-            st.error("Failed to update preference. Please try again later.")
-        
+
+        try:
+            response = requests.get("http://127.0.0.1:8000/api/listing/get-listings", params=payload)
+            response.raise_for_status()
+            st.session_state.filtered_listings = response.json().get("data", [])
+            st.success("Preference saved and listings updated!")
+        except Exception as e:
+            st.error(f"Error fetching listings: {str(e)}")

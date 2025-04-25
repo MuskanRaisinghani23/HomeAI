@@ -13,8 +13,6 @@ config = load_snowflake_config()
 
 session = Session.builder.configs(config).create()
 
-conn = snowflake_connection()
-
 class AskRequest(BaseModel):
     query: str
 
@@ -48,6 +46,7 @@ async def get_filtered_listings(
     Get filtered room listings.
     """
     try:
+        conn = snowflake_connection()
         cursor = conn.cursor()
 
         # Base query with report_count filter
@@ -92,30 +91,30 @@ async def get_filtered_listings(
         cursor.execute(query, tuple(params))
         results = cursor.fetchall()
 
-        cursor.close()
-        conn.close()
-
         listings = [
             {   
-                "id": row[0],
-                "location": row[1],
-                "listing_url": row[2],
-                "listing_date": row[3],
-                "price": row[4],
-                "description": row[5],
-                "image_url": row[6],
-                "source": row[7],
-                "other_details": row[8],
-                "room_count": row[9],
-                "bath_count": row[10],
-                "people_count": row[11],
-                "contact": row[12],
-                "report_count": row[13],
-                "room_type": row[14],
-                "laundry_available": row[15],
+                "ID": row[0],
+                "LOCATION": row[1],
+                "LISTING_URL": row[2],
+                "LISTING_DATE": row[3],
+                "PRICE": row[4],
+                "DESCRIPTION_SUMMARY": row[5],
+                "IMAGE_URL": row[6],
+                "SOURCE": row[7],
+                "OTHER_DETAILS": row[8],
+                "ROOM_COUNT": row[9],
+                "BATH_COUNT": row[10],
+                "PEOPLE_COUNT": row[11],
+                "CONTACT": row[12],
+                "REPORT_COUNT": row[13],
+                "ROOM_TYPE": row[14],
+                "LAUNDRY_AVAILABLE": row[15],
             }
             for row in results
         ]
+
+        cursor.close()
+        conn.close()
 
         return {"status": "success", "data": listings}
 
@@ -126,7 +125,7 @@ class SearchParams(BaseModel):
     q: str
     k: int = 10
 
-@router.post("/search_listings", response_model=List[Dict])
+@router.post("/search-listings", response_model=List[Dict])
 async def search_listings(params: SearchParams):
     service = "HOME_AI_SCHEMA.MY_LISTINGS_SEARCH"
     fetch_limit = max(params.k * 3, 20)
@@ -148,11 +147,10 @@ async def search_listings(params: SearchParams):
     SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW(%s, %s)
     """
     try:
+        conn = snowflake_connection()
         cur = conn.cursor(DictCursor)
         cur.execute(sql, (service, json.dumps(payload)))
         row = cur.fetchone()
-        cur.close()
-        conn.close()
         if not row or row[list(row.keys())[0]] is None:
             return []
 
@@ -166,8 +164,12 @@ async def search_listings(params: SearchParams):
             if int(item.get("REPORT_COUNT", 0) or 0) > 2:
                 continue
             filtered.append(item)
+        
+        cur.close()
+        conn.close()
 
-        return {"status": "success", "data": filtered[: params.k]}
+        listings = filtered[: params.k]
+        return listings
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
