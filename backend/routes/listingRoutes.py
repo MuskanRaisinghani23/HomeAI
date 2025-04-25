@@ -13,8 +13,12 @@ config = load_snowflake_config()
 
 session = Session.builder.configs(config).create()
 
-class AskRequest(BaseModel):
-    query: str
+class SearchParams(BaseModel):
+    q: str
+    k: int = 10
+
+# class AskRequest(BaseModel):
+#     query: str
 
 # @router.post("/ask")
 # async def ask(req: AskRequest):
@@ -49,14 +53,13 @@ async def get_filtered_listings(
         conn = snowflake_connection()
         cursor = conn.cursor()
 
-        # Base query with report_count filter
         query = """
         SELECT 
-            id, location, listing_url, listing_date, price, description_summary,
+            room_id, location, listing_url, listing_date, price, description_summary,
             image_url, source, other_details,
             room_count, bath_count, people_count, contact,
             report_count, room_type, laundry_available
-        FROM ROOMS_LISTINGS_NEW
+        FROM ROOMS_LISTINGS
         WHERE report_count < 3
         """
 
@@ -93,7 +96,7 @@ async def get_filtered_listings(
 
         listings = [
             {   
-                "ID": row[0],
+                "ROOM_ID": row[0],
                 "LOCATION": row[1],
                 "LISTING_URL": row[2],
                 "LISTING_DATE": row[3],
@@ -121,57 +124,77 @@ async def get_filtered_listings(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching listings: {str(e)}")
 
-class SearchParams(BaseModel):
-    q: str
-    k: int = 10
 
 @router.post("/search-listings", response_model=List[Dict])
 async def search_listings(params: SearchParams):
     service = "HOME_AI_SCHEMA.MY_LISTINGS_SEARCH"
     fetch_limit = max(params.k * 3, 20)
 
-    query = params.q + "Strictly follow my question to get the response by checking all the details in the listing." 
+    conn = snowflake_connection()
+    cur = conn.cursor(DictCursor)
 
-    payload = {
-        "query":   query,
-        "columns": [
-            "ID", "LISTING_URL","LOCATION","PRICE","LISTING_DATE", "DESCRIPTION_SUMMARY", 
-            "ROOM_COUNT","BATH_COUNT","PEOPLE_COUNT",
-            "SOURCE","CONTACT","LAUNDRY_AVAILABLE",
-            "REPORT_COUNT","IMAGE_URL","ROOM_TYPE","OTHER_DETAILS"
-        ],
-        "limit": fetch_limit
-    }
-
-    sql = """
-    SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW(%s, %s)
-    """
     try:
-        conn = snowflake_connection()
-        cur = conn.cursor(DictCursor)
-        cur.execute(sql, (service, json.dumps(payload)))
-        row = cur.fetchone()
-        if not row or row[list(row.keys())[0]] is None:
-            return []
+        classification_prompt = (
+            f"Classify the following input into one of these categories:\n"
+            f"- greeting\n"
+            f"- listing_question\n"
+            f"- unrelated_question\n\n"
+            f"Only return one word: greeting, listing_question, or unrelated_question.\n\n"
+            f"Input: {params.q}"
+        )
 
-        preview_json = json.loads(row[list(row.keys())[0]])
-        # 3) Extract the "results" array
-        results = preview_json.get("results", [])
+        classify_sql = """
+        SELECT SNOWFLAKE.CORTEX.COMPLETE('claude-3-5-sonnet', %s)
+        """
+        cur.execute(classify_sql, (classification_prompt,))
+        classify_row = cur.fetchone()
+        classification = classify_row[list(classify_row.keys())[0]].strip().lower()
 
-        filtered = []
-        for item in results:
-            # report_count must be ≤ 3
-            if int(item.get("REPORT_COUNT", 0) or 0) > 2:
-                continue
-            filtered.append(item)
+        if "greeting" in classification:
+            return [{"response": "Hi! I'm here to assist you in finding rooms. Please type your preferred location, budget, or other needs."}]
         
-        cur.close()
-        conn.close()
+        elif "unrelated_question" in classification:
+            return [{"response": "Sorry, I'm unable to answer that question. I'm here to assist you in finding rooms. Please type your preferred location, budget, or other needs."}]
+        
+        elif "listing_question" in classification:
+            payload = {
+                "query": params.q,
+                "columns": [
+                    "ROOM_ID", "LISTING_URL", "LOCATION", "PRICE", "LISTING_DATE", "DESCRIPTION_SUMMARY",
+                    "ROOM_COUNT", "BATH_COUNT", "PEOPLE_COUNT",
+                    "SOURCE", "CONTACT", "LAUNDRY_AVAILABLE",
+                    "REPORT_COUNT", "IMAGE_URL", "ROOM_TYPE", "OTHER_DETAILS"
+                ],
+                "limit": fetch_limit
+            }
 
-        listings = filtered[: params.k]
-        return listings
+            search_sql = """
+            SELECT SNOWFLAKE.CORTEX.SEARCH_PREVIEW(%s, %s)
+            """
+            cur.execute(search_sql, (service, json.dumps(payload)))
+            row = cur.fetchone()
+
+            if not row or row[list(row.keys())[0]] is None:
+                return []
+
+            preview_json = json.loads(row[list(row.keys())[0]])
+            results = preview_json.get("results", [])
+
+            # Filter: report_count <= 2
+            filtered = []
+            for item in results:
+                if int(item.get("REPORT_COUNT", 0) or 0) > 2:
+                    continue
+                filtered.append(item)
+
+            listings = filtered[: params.k]
+            return [{"response": listings}]
+
+        else:
+            return [{"response": "Sorry, I didn't understand that. Please type your room search preferences!"}]
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-    
+    finally:
+        cur.close()
+        conn.close()
