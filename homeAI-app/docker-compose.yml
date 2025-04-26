@@ -1,0 +1,7 @@
+services:
+  frontend:
+    build: .
+    container_name: react_vite_app
+    restart: unless-stopped
+    ports:
+      - "4173:4173" 
