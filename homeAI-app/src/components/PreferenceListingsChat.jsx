@@ -30,7 +30,7 @@ export default function PreferenceListingsChat() {
     };
     try {
       const res = await axios.get(
-        "http://localhost:8001/api/listing/get-listings",
+        "http://76.152.120.193:8001/api/listing/get-listings",
         { params }
       );
       setListings(res.data.data || []);
@@ -47,7 +47,7 @@ export default function PreferenceListingsChat() {
 
     try {
       const res = await axios.post(
-        "http://localhost:8001/api/listing/search-listings",
+        "http://76.152.120.193:8001/api/listing/search-listings",
         {
           q: userMessage,
           k: 10,
