@@ -37,7 +37,7 @@ export default function PreferenceListingsChat() {
     try {
       setLoading(true);
       const nearbyResponse = await fetch(
-        `${base_url}/api/map/nearby/${location}`
+        `${base_url}api/map/nearby/${location}`
       );
       const nearbyData = await nearbyResponse.json();
 
@@ -113,7 +113,7 @@ export default function PreferenceListingsChat() {
       .catch((err) => {
         console.error("Error loading prefs or listings:", err);
       });
-  }, []); 
+  }, []);
 
   const handleSendChat = async () => {
     if (!chatInput.trim()) return;
@@ -247,22 +247,26 @@ export default function PreferenceListingsChat() {
         {nearbyPlaces ? <NearbyPlaces nearbyPlaces={nearbyPlaces} /> : <></>}
 
         {listings.length > 0 ? (
-          <ListingCard listings={listings} />
+          chatLoading ? (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "40px",
+              }}
+            >
+              <CircularProgress />
+            </div>
+          ) : (
+            <ListingCard listings={listings} />
+          )
         ) : (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: "40px",
-            }}
-          >
-            <CircularProgress />
-          </div>
+          <></>
         )}
       </div>
 
       <div className="right-section panel">
-        <h2>💬 Chatbot</h2>
+        <h2>💬 HomeAI Bot</h2>
         <div className="chat-history">
           {chatHistory.map((entry, idx) => (
             <div key={idx} className={`chat-bubble ${entry.role}`}>
@@ -282,7 +286,7 @@ export default function PreferenceListingsChat() {
           <button
             className="btn btn-send"
             onClick={handleSendChat}
-            disabled={!chatLoading}
+            disabled={chatLoading}
           >
             Send
           </button>

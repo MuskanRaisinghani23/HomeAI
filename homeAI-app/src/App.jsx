@@ -28,7 +28,7 @@ function App() {
 
   return (
     <Router>
-      {user && <Navbar username={user.username} onLogout={handleLogout} />}
+      {user && <Navbar username={user.first_name} onLogout={handleLogout} />}
       <Routes>
         <Route
           path="/"
