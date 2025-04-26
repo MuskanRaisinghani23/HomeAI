@@ -33,6 +33,7 @@ WITH matched_listings AS (
   AND (up.room_type IS NULL OR rl.ROOM_TYPE = up.room_type)
   AND (up.LOCATION IS NULL OR rl.LOCATION = up.LOCATION)
   AND rl.LISTING_DATE BETWEEN current_date() - 5 AND current_date()
+  WHERE up.getalerts = true
 ),
 ranked_listings AS (
   SELECT *,
