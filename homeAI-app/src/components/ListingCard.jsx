@@ -161,8 +161,7 @@ const ListingCard = ({ listings }) => {
         <div className="modal-overlay">
           <div className="modal">
             <p>
-              Are you sure you want to report listing #
-              {pendingReportId} as inactive?
+              Are you sure you want to report this listing as inactive?
             </p>
             <div className="modal-buttons">
               <button
