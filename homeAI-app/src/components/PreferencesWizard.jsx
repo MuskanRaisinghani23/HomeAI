@@ -20,7 +20,6 @@ import STATE_CITY_MAP from '../STATE_CITY_MAP';
 const PROPERTY_TYPE_OPTIONS = ['Shared', 'Private'];
 
 export default function PreferencesForm() {
-  // grab the logged-in user
   const localuser = localStorage.getItem('user') || '';
   let userEmail = "";
   if (!localuser) {
@@ -53,7 +52,6 @@ export default function PreferencesForm() {
 
   const base_url= "http://76.152.120.193:8001/"
 
-  // load saved prefs on mount
   useEffect(() => {
     if (!userEmail) return;
     axios
@@ -67,10 +65,8 @@ export default function PreferencesForm() {
           setMinPrice    (p.MINPRICE    != null ? String(p.MINPRICE) : '');
           setMaxPrice    (p.MAXPRICE    != null ? String(p.MAXPRICE) : '');
           setWantsAmenities(Boolean(p.AMENITIES));
-          // NOTE: getAlerts isn't stored server-side yet
           setGetAlerts(false);
 
-          // DB: CITY=state, LOCATION=city
           if (p.CITY) {
             setSelectedState(p.CITY);
             const list = STATE_CITY_MAP[p.CITY] || [];
@@ -84,7 +80,6 @@ export default function PreferencesForm() {
       .catch(console.error);
   }, [userEmail]);
 
-  // update city list when state changes
   useEffect(() => {
     const list = STATE_CITY_MAP[selectedState] || [];
     setCityOptions(list.slice(0, 15));

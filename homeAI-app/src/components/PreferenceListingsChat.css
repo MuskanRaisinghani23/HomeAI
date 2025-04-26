@@ -17,6 +17,9 @@
     padding: 1.5rem;
     box-shadow: 0 2px 12px rgba(0,0,0,0.06);
   }
+  .right-section{
+    width: 100%;
+  }
   
   /* section headings */
   .left-section h2,
@@ -29,8 +32,7 @@
   /* two-column filter grid */
   .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 1.25rem;
+    gap: 1.5rem;
     margin: 1rem 0 1.5rem;
   }
   
