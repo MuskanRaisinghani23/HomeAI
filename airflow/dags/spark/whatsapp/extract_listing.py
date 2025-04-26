@@ -38,7 +38,7 @@ def split_chat_to_dataframe(full_text):
     )
 
     # Compute cutoff for one week ago
-    cutoff = datetime.now() - timedelta(days=10)
+    cutoff = datetime.now() - timedelta(days=2)
 
     lines = full_text.splitlines()
     lines_rev = lines[::-1]      # start from the bottom (latest message)
