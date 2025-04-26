@@ -4,4 +4,4 @@ services:
     container_name: react_vite_app
     restart: unless-stopped
     ports:
-      - "80:4173" 
+      - "4173:4173" 
