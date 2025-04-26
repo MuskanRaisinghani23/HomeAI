@@ -65,9 +65,10 @@ def process_listings(json_file_path, output_file_path):
     - **Room Count**: The total number of rooms/beds in the property (ROOM_COUNT).
     - **Bathroom Count**: The total number of bathrooms in the property (BATH_COUNT).
     - **People Count**: The total number of people living in the property (PEOPLE_COUNT).
+    - **Description**: The short description summary of the property. Translate to English language wherever necessary (DESCRIPTION_summary).
     - **Contact**: The contact number for the listing (CONTACT).
     - **Laundry Availability**: if laundry available then 1 or else 0 (LAUNDARY_AVAILABLE).
-    - **Room Type**: Type of room (e.g., Private or Shared) (ROOM_TYPE).
+    - **Room Type**: Type of room (e.g., Private or Shared) (ROOM_TYPE).  Extract this based on Description content.
     - **Main Location**: The main location of the property. Make sure it has both the city and state. State should be abbreviated (e.g., Boston, MA) (MAIN_LOCATION).
     - **Other Details**: Any additional details, only if mentioned in the listing. This should be in a dictionary format (OTHER_details).
     
@@ -76,6 +77,7 @@ def process_listings(json_file_path, output_file_path):
       "room_count": number <room_count or null>,
       "bath_count": number <bath_count or null>,
       "people_count": number <people_count or null>,
+      "description": string "<description_summary or null>",
       "contact": number "<contact_number or null>",
       "laundry_available": integer (0/1)<laundry_available or null>,
       "room_type": string "<room_type or null>",
