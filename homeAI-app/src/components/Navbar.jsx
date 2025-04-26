@@ -36,10 +36,10 @@ export default function Navbar({ username, onLogout }) {
       {/* Navigation Links */}
       <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
         <Link
-          to="/listings"
+          to="/preferences"
           style={{ textDecoration: "none", color: "#333", fontWeight: "bold" }}
         >
-          Listings
+          Preferences
         </Link>
         <Link
           to="/dashboard"

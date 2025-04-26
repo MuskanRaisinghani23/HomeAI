@@ -1,0 +1,201 @@
+/* PreferencesWizard.css */
+
+/* page background */
+body {
+    background-color: #f2f4f6;
+  }
+  
+  /* main white panel */
+  .container {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  /* headings */
+  .title {
+    margin: 0 0 0.25rem;
+    font-size: 1.75rem;
+    color: #111;
+  }
+  .subtitle {
+    margin: 0 0 1.5rem;
+    color: #555;
+    line-height: 1.4;
+  }
+  
+  /* tabs */
+  .tabs-nav {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 1.5rem;
+  }
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 0.75rem 0;
+    font-weight: 500;
+    color: #777;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab.active {
+    color: #000;
+    border-bottom-color: #000;
+  }
+  
+  /* content area */
+  .step-content {
+    min-height: 300px;
+  }
+  
+  /* question text */
+  .question {
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+    color: #111;
+  }
+  
+  /* Property-type cards */
+  .card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 1rem;
+  }
+  .card {
+    flex: 1 1 calc(25% - 16px);
+    min-width: 120px;
+    height: 100px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  }
+  .card:hover {
+    background: #f9f9f9;
+  }
+  .card.selected {
+    border-color: #377dff;
+    box-shadow: 0 0 0 2px rgba(55, 125, 255, 0.2);
+  }
+  .card-label {
+    margin-top: 8px;
+    font-weight: 500;
+    color: #222;
+  }
+  .checkmark {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: #377dff;
+    color: #fff;
+    font-size: 0.75rem;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 50%;
+  }
+  
+  /* sliders */
+  .slider-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  .slider {
+    flex: 1;
+    margin-right: 1rem;
+  }
+  .slider-value {
+    width: 32px;
+    text-align: right;
+    font-weight: 600;
+    color: #111;
+  }
+  
+  /* price inputs */
+  .price-inputs {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+  }
+  .price-inputs label {
+    font-weight: 500;
+    color: #222;
+  }
+  .price-inputs input {
+    margin-left: 0.5rem;
+    width: 80px;
+    padding: 0.25rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* chips for amenities & location */
+  .chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  .chip {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .chip:hover {
+    border-color: #999;
+  }
+  .chip.selected {
+    background: #377dff;
+    border-color: #377dff;
+    color: #fff;
+  }
+  
+  /* nav buttons */
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+  }
+  .button {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .button.secondary {
+    background: #fff;
+    border: 1px solid #ccc;
+    color: #555;
+  }
+  .button:not(.secondary) {
+    background: #377dff;
+    border: none;
+    color: #fff;
+  }
+  .button.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  

@@ -1,48 +1,108 @@
-import React, { useState } from "react";
+// ListingCard.jsx
+import React, { useState, useEffect } from "react";
 import "./styles.css";
+import axios from "axios";
 
 const ListingCard = ({ listings }) => {
+  // Replace with your real user-email logic if needed
+  const userEmail = localStorage.getItem("userEmail") || "test@example.com";
+
+  // State for feedback
+  const [reportedRoomIds, setReportedRoomIds] = useState([]);
+
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [pendingReportId, setPendingReportId] = useState(null);
+
+  // State for “More Info” modal
   const [showModal, setShowModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState(null);
+
+  // 1) On mount: fetch which rooms this user has reported
+  useEffect(() => {
+    const fetchReported = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:8002/api/listing/get-user-feedback",
+          { params: { user_email: userEmail } }
+        );
+        // Expecting: { reported_room_ids: [123,456,...] }
+        setReportedRoomIds(res.data.reported_room_ids || []);
+      } catch (err) {
+        console.error("Error fetching reported rooms:", err);
+      }
+    };
+    fetchReported();
+  }, [userEmail]);
 
   const handleMoreInfo = (listing) => {
     setSelectedListing(listing);
     setShowModal(true);
   };
 
-  const reportListing = (listing_id) => {
-    console.log("Reporting listing as inactive:", listing_id);
+  const reportListing = (roomId) => {
+    setPendingReportId(roomId);
+    setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setSelectedListing(null);
+  const confirmReport = async () => {
+    try {
+      await axios.post(
+        "http://localhost:8002/api/listing/user-feedback",
+        {
+          user_email: userEmail,
+          comments: "",
+          room_id: pendingReportId,
+        }
+      );
+      alert("Listing reported successfully!");
+      // mark this ID as reported locally so button disables immediately
+      setReportedRoomIds((prev) => [...prev, pendingReportId]);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to report listing. Please try again.");
+    } finally {
+      setIsModalOpen(false);
+      setPendingReportId(null);
+    }
+  };
+
+  const cancelReport = () => {
+    setIsModalOpen(false);
+    setPendingReportId(null);
   };
 
   return (
     <div className="listings-container">
       <h3>🎯 Matched Listings</h3>
-      {listings?.length > 0 ? (
+      {listings.length > 0 ? (
         listings.map((l) => {
-          const images = l.IMAGE_URL?.split(",") || [];
-          const isWhatsAppSource = l.SOURCE?.toLowerCase().includes("whatsapp");
+          const images = (l.IMAGE_URL || "").split(",") || [];
+          const isWhatsAppSource =
+            (l.SOURCE || "").toLowerCase().includes("whatsapp");
+
+          const alreadyReported = reportedRoomIds.includes(l.ROOM_ID);
 
           return (
-            <div key={l.ID || l.LISTING_URL} className="listing-card">
+            <div
+              key={l.ROOM_ID || l.LISTING_URL}
+              className="listing-card"
+            >
               <h4>{l.DESCRIPTION_SUMMARY}</h4>
               <p className="listing-meta">
                 {l.LOCATION} · ${l.PRICE} · {l.ROOM_TYPE}
               </p>
               <p className="listing-meta">Source: {l.SOURCE}</p>
-              <p className="listing-meta">Listing Date: {l.LISTING_DATE}</p>
+              <p className="listing-meta">Date: {l.LISTING_DATE}</p>
               {l.BATH_COUNT && (
-                <p className="listing-meta">Bath Count: {l.BATH_COUNT}</p>
+                <p className="listing-meta">
+                  Baths: {l.BATH_COUNT}
+                </p>
               )}
               {l.LAUNDRY_AVAILABLE && (
-                <p className="listing-meta">Laundry: {l.LAUNDRY_AVAILABLE}</p>
-              )}
-              {l.CONTACT && (
-                <p className="listing-meta">Contact: {l.CONTACT}</p>
+                <p className="listing-meta">
+                  Laundry: {l.LAUNDRY_AVAILABLE}
+                </p>
               )}
               {!isWhatsAppSource && images.length > 0 && (
                 <div className="image-carousel">
@@ -52,7 +112,7 @@ const ListingCard = ({ listings }) => {
                       src={url.trim()}
                       alt={`img-${i}`}
                       className="preview-img"
-                      onError={(e) => e.target.style.display = "none"}
+                      onError={(e) => (e.target.style.display = "none")}
                     />
                   ))}
                   {images.length > 3 && <span>➡️</span>}
@@ -61,28 +121,76 @@ const ListingCard = ({ listings }) => {
               {isWhatsAppSource && l.IMAGE_URL && (
                 <p>
                   <strong>Image URL:</strong>{" "}
-                  <a href={l.IMAGE_URL} target="_blank" rel="noreferrer">
+                  <a
+                    href={l.IMAGE_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     {l.IMAGE_URL}
                   </a>
                 </p>
               )}
-              <button className="more-info" onClick={() => handleMoreInfo(l)}>
+
+              <button
+                className="more-info"
+                onClick={() => handleMoreInfo(l)}
+              >
                 More Info
               </button>
-              <button className="report" onClick={() => reportListing(l.ID)}>
-                Report as Inactive
+
+              <button
+                className="report"
+                onClick={() => reportListing(l.ROOM_ID)}
+                disabled={alreadyReported}
+              >
+                {alreadyReported
+                  ? "Reported"
+                  : "Report as Inactive"}
               </button>
             </div>
           );
         })
       ) : (
-        <p>No listings yet.</p>
+        <p>No listings match your criteria.</p>
       )}
 
+      {/* Report Confirmation Modal */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <p>
+              Are you sure you want to report listing #
+              {pendingReportId} as inactive?
+            </p>
+            <div className="modal-buttons">
+              <button
+                className="btn-confirm"
+                onClick={confirmReport}
+              >
+                Report
+              </button>
+              <button
+                className="btn-cancel"
+                onClick={cancelReport}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* More Info Modal */}
       {showModal && selectedListing && (
-        <div className="modal-overlay" onClick={handleCloseModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button onClick={handleCloseModal}>X</button>
+        <div
+          className="modal-overlay"
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            className="modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button onClick={() => setShowModal(false)}>X</button>
             <h4>{selectedListing.DESCRIPTION_SUMMARY}</h4>
             <p>
               <strong>URL:</strong>{" "}
@@ -94,35 +202,7 @@ const ListingCard = ({ listings }) => {
                 {selectedListing.LISTING_URL}
               </a>
             </p>
-            {selectedListing.OTHER_DETAILS && (
-              <>
-                <h5>Other Details:</h5>
-                <div className="other-details-grid">
-                  {Object.entries(
-                    JSON.parse(selectedListing.OTHER_DETAILS)
-                  ).map(([key, value]) => (
-                    <div key={key} className="detail-item">
-                      <strong>{key.replace(/_/g, " ")}:</strong>{" "}
-                      {Array.isArray(value) ? (
-                        <ul className="nested-list">
-                          {value.map((v, i) => (
-                            <li key={i}>{v}</li>
-                          ))}
-                        </ul>
-                      ) : typeof value === "boolean" ? (
-                        value ? (
-                          "Yes"
-                        ) : (
-                          "No"
-                        )
-                      ) : (
-                        value
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
+            {/* render OTHER_DETAILS if present… */}
           </div>
         </div>
       )}
