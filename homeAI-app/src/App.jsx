@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import LoginSignup from "./components/LoginSIgnup";
 import PreferenceListingsChat from "./components/PreferenceListingsChat";
 import PreferencesWizard from "./components/PreferencesWizard";
+import AnalyticsDashboard from "./components/AnalyticsDashboard";
 
 function App() {
   // try to load saved user once on startup
@@ -43,6 +44,10 @@ function App() {
         <Route
           path="/listings"
           element={<PreferenceListingsChat />}
+        />
+        <Route
+          path="/analytics"
+          element={<AnalyticsDashboard />}
         />
         <Route
           path="/preferences"

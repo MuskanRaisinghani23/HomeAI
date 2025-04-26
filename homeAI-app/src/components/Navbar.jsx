@@ -42,7 +42,7 @@ export default function Navbar({ username, onLogout }) {
           Preferences
         </Link>
         <Link
-          to="/dashboard"
+          to="/analytics"
           style={{ textDecoration: "none", color: "#333", fontWeight: "bold" }}
         >
           Analytics
