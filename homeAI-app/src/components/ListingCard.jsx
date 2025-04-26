@@ -18,12 +18,14 @@ const ListingCard = ({ listings }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState(null);
 
+  const base_url= "http://76.152.120.193:8001/"
+
   // 1) On mount: fetch which rooms this user has reported
   useEffect(() => {
     const fetchReported = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:8002/api/listing/get-user-feedback",
+          base_url+"api/listing/get-user-feedback",
           { params: { user_email: userEmail } }
         );
         // Expecting: { reported_room_ids: [123,456,...] }
@@ -48,7 +50,7 @@ const ListingCard = ({ listings }) => {
   const confirmReport = async () => {
     try {
       await axios.post(
-        "http://localhost:8002/api/listing/user-feedback",
+        base_url+"api/listing/user-feedback",
         {
           user_email: userEmail,
           comments: "",
@@ -101,7 +103,7 @@ const ListingCard = ({ listings }) => {
               )}
               {l.LAUNDRY_AVAILABLE && (
                 <p className="listing-meta">
-                  Laundry: {l.LAUNDRY_AVAILABLE}
+                  Laundry: {l.LAUNDRY_AVAILABLE ? "Yes" : "No"}
                 </p>
               )}
               {!isWhatsAppSource && images.length > 0 && (
@@ -192,7 +194,7 @@ const ListingCard = ({ listings }) => {
           >
             <button onClick={() => setShowModal(false)}>X</button>
             <h4>{selectedListing.DESCRIPTION_SUMMARY}</h4>
-            <p>
+            {selectedListing.SOURCE !== 'WHATSAPP' && <p>
               <strong>URL:</strong>{" "}
               <a
                 href={selectedListing.LISTING_URL}
@@ -201,8 +203,36 @@ const ListingCard = ({ listings }) => {
               >
                 {selectedListing.LISTING_URL}
               </a>
-            </p>
-            {/* render OTHER_DETAILS if present… */}
+            </p>}
+            {selectedListing.OTHER_DETAILS && (
+              <>
+                <h5>Other Details:</h5>
+                <div className="other-details-grid">
+                  {Object.entries(
+                    JSON.parse(selectedListing.OTHER_DETAILS)
+                  ).map(([key, value]) => (
+                    <div key={key} className="detail-item">
+                      <strong>{key.replace(/_/g, " ")}:</strong>{" "}
+                      {Array.isArray(value) ? (
+                        <ul className="nested-list">
+                          {value.map((v, i) => (
+                            <li key={i}>{v}</li>
+                          ))}
+                        </ul>
+                      ) : typeof value === "boolean" ? (
+                        value ? (
+                          "Yes"
+                        ) : (
+                          "No"
+                        )
+                      ) : (
+                        value
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

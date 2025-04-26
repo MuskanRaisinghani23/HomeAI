@@ -18,7 +18,8 @@ const STATE_CITY_MAP = {
       "Salem"
     ],
     NY: [
-      "Gramercy",
+      "Brooklyn",
+      "Queens",
       "Deer Park",
       "Sunnyside",
       "Ridgewood",
@@ -35,7 +36,7 @@ const STATE_CITY_MAP = {
       "Canandaigua"
     ],
     WA: [
-      "Shoreline",
+      "Seattle",
       "Millcreek",
       "Poulsbo",
       "Victory Heights",
@@ -53,7 +54,7 @@ const STATE_CITY_MAP = {
     ],
     FL: [
       "Tampa",
-      "Hialeah",
+      "Miami",
       "Davie",
       "Port Richey",
       "St. Petersburg",
@@ -69,12 +70,12 @@ const STATE_CITY_MAP = {
       "Ellenton"
     ],
     CA: [
-      "Oceanside",
+      "San Francisco",
       "Coronado",
       "Fremont",
-      "Woodland Hills",
+      "Mountain View",
       "Pasadena",
-      "Encinitas",
+      "San Jose",
       "West Los Angeles",
       "Santa Cruz",
       "Westwood",

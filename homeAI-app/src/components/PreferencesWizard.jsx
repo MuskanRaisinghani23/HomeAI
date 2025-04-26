@@ -51,11 +51,13 @@ export default function PreferencesForm() {
     (STATE_CITY_MAP[stateOptions[0]] || []).slice(0, 15)
   );
 
+  const base_url= "http://76.152.120.193:8001/"
+
   // load saved prefs on mount
   useEffect(() => {
     if (!userEmail) return;
     axios
-      .get('http://localhost:8002/api/listing/user-preferences', { params: { user_email: userEmail } })
+      .get(base_url+'api/listing/user-preferences', { params: { user_email: userEmail } })
       .then(res => {
         const p = res.data;
         if (p && Object.keys(p).length) {
@@ -115,7 +117,7 @@ export default function PreferencesForm() {
     };
 
     axios
-      .post('http://localhost:8002/api/listing/user-preferences', payload)
+      .post(base_url+'api/listing/user-preferences', payload)
       .then(() => alert('Preferences saved!'))
       .catch(err => {
         console.error(err);

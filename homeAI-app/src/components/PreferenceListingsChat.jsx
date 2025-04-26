@@ -26,6 +26,8 @@ export default function PreferenceListingsChat() {
   const [chatInput, setChatInput] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
 
+  const base_url= "http://76.152.120.193:8001/"
+
   // single fetch-listings function for manual use
   const handleFetchListings = async () => {
     const params = {
@@ -38,7 +40,7 @@ export default function PreferenceListingsChat() {
     console.log("Fetching listings with params:", params);
     try {
       const res = await axios.get(
-        "http://localhost:8002/api/listing/get-listings",
+        base_url+"api/listing/get-listings",
         { params }
       );
       setListings(res.data.data || []);
@@ -52,7 +54,7 @@ export default function PreferenceListingsChat() {
     if (!userEmail) return;
 
     axios
-      .get("http://localhost:8002/api/listing/user-preferences", {
+      .get(base_url+"api/listing/user-preferences", {
         params: { user_email: userEmail },
       })
       .then((res) => {
@@ -79,7 +81,7 @@ export default function PreferenceListingsChat() {
 
         // fetch listings with initial prefs
         return axios.get(
-          "http://localhost:8002/api/listing/get-listings",
+          base_url+"api/listing/get-listings",
           {
             params: {
               location: initLocation,
@@ -108,10 +110,10 @@ export default function PreferenceListingsChat() {
 
     try {
       const res = await axios.post(
-        "http://localhost:8002/api/listing/search-listings",
+        base_url+"api/listing/search-listings",
         { q: userMessage, k: 10 }
       );
-      const results = res.data;
+      const results = res.data ? res.data[0].response : [];
       setListings(results);
       setChatHistory((prev) => [
         ...prev,
@@ -237,7 +239,7 @@ export default function PreferenceListingsChat() {
           <input
             type="text"
             value={chatInput}
-            placeholder="Ask me about listings..."
+            placeholder="Search for rooms..."
             onChange={(e) => setChatInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSendChat()}
           />
