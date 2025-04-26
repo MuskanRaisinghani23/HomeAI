@@ -41,7 +41,7 @@ def process_listings(json_file_path, output_file_path):
     - **Description**: The short description summary of the property. Translate to English language wherever necessary (DESCRIPTION_summary).
     - **Contact**: The contact number for the listing (CONTACT).
     - **Laundry Availability**: if laundry available then 1 or else 0 (LAUNDARY_AVAILABLE).
-    - **Room Type**: Type of room (e.g., Private or Shared) (ROOM_TYPE).
+    - **Room Type**: Type of room (e.g., Private or Shared) (ROOM_TYPE). Extract this based on Description content.
     - **Other Details**: Any additional details, only if mentioned in the listing. This should be in a dictionary format (OTHER_details).
     
     Ensure the JSON response follows this structure:

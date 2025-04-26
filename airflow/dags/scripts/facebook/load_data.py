@@ -14,6 +14,8 @@ def load_data(file_name, stage_name):
     result = cur.execute(put_command).fetchall()
     print("PUT command result: ", result)
     print(f"Data loaded successfully from {file_name} to snowflake stage")
+    cur.close()
+    conn.close()
   except Exception as e:
     print("Exception in load_data function: ",e)
     return
@@ -55,7 +57,8 @@ def merge_data(stage_name, table_name, filename, primary_key):
                 report_count,
                 image_url,
                 room_type,
-                other_details)
+                other_details,
+                room_id)
         VALUES (s.LISTING_URL,
                 s.LOCATION,
                 CAST(NULLIF(REGEXP_REPLACE(s.PRICE, '[^0-9.]', ''), '') AS NUMBER),
@@ -70,7 +73,8 @@ def merge_data(stage_name, table_name, filename, primary_key):
                 0,
                 s.IMAGE_URL,
                 s.ROOM_TYPE,
-                s.OTHER_DETAILS);
+                s.OTHER_DETAILS,
+                rooms_listings_seq.nextval);
     '''
     print(merge_query)
     print("merging data...")
