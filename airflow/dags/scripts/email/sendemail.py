@@ -29,9 +29,9 @@ WITH matched_listings AS (
     rl.DESCRIPTION_SUMMARY
   FROM user_preference up
   JOIN ROOMS_LISTINGS rl
-    ON (up.budget IS NULL OR rl.PRICE <= up.budget)
+    ON (up.MAXPRICE IS NULL OR rl.PRICE <= up.MAXPRICE)
   AND (up.room_type IS NULL OR rl.ROOM_TYPE = up.room_type)
-  AND (up.region IS NULL OR rl.LOCATION = up.region)
+  AND (up.LOCATION IS NULL OR rl.LOCATION = up.LOCATION)
   AND rl.LISTING_DATE BETWEEN current_date() - 5 AND current_date()
 ),
 ranked_listings AS (
