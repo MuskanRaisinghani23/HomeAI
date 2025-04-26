@@ -23,7 +23,7 @@ export default function LoginSignup({ onAuth }) {
   const [form, setForm] = useState({});
   const [error, setError] = useState(null);
 
-  const base_url = "http://localhost:8001/";
+  const base_url = "http://76.152.120.193:8001/";
 
   const navigate = useNavigate();
 
