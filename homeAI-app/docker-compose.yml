@@ -1,0 +1,9 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: react_vite_app
+    restart: unless-stopped
+    ports:
+      - "80:80"
