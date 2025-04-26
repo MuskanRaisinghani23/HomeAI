@@ -7,7 +7,7 @@ config = configparser.ConfigParser()
 config.read('configuration.properties')
 
 api_key = config["GOOGLE-CLOUD"]["api_key"]
-neo4j_client = Neo4jClient("bolt://localhost:7687", "neo4j", "neo4jtest")
+neo4j_client = Neo4jClient("bolt://76.152.120.193:7687", "neo4j", "neo4jtest")
 
 router = APIRouter()
 
