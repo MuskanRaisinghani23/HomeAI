@@ -189,6 +189,7 @@ Listings (:Listing nodes) are connected to nearby amenities (:Place nodes) using
 ## 👥 Authors
 
 - **Monil Shah** 
+- **Anshul Chaudhary** 
 - **Muskan Deepak Raisinghani** 
 - **Rachana Keshav** 
 
