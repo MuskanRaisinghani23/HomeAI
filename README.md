@@ -1,13 +1,10 @@
-# HomieAI
-HomieAI is built to make the process of finding budget-friendly shared housing easier and more organized. Right now, most people rely on scattered WhatsApp groups and Facebook Marketplace, which can be messy and time-consuming. This project aims to bring everything into one place for a smoother and more efficient experience.
+# HomeAI
+HomeAI is built to make the process of finding budget-friendly shared housing easier and more organized. Right now, most people rely on scattered WhatsApp groups and Facebook Marketplace, which can be messy and time-consuming. This project aims to bring everything into one place for a smoother and more efficient experience.
 
 [![Codelab Documentation](https://img.shields.io/badge/codelabs-4285F4?style=for-the-badge&logo=codelabs&logoColor=white)](https://codelabs-preview.appspot.com/?file_id=12itBNmCPvDPGoQZRLQj9TXRsB-O6feUUO2VdW6u5b6E#0)
 
 [![Tableau Dashboard](https://img.shields.io/badge/Tableau_Dashboard-E97627?style=for-the-badge&logo=codelabs&logoColor=white)](https://public.tableau.com/app/profile/muskan.deepak.raisinghani/viz/HomeAIdashboard/HomeAIAnalysisDashboard)
 
-## Live application link
-
-[![Demo](https://img.shields.io/badge/Demo_Link-808080?style=for-the-badge&logoColor=white)](http://76.152.120.193:4173/)
 
 ## Technologies Used
 [![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white)](https://react.dev/)
